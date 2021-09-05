@@ -19,7 +19,7 @@ const port = process.env.PORT || 7500
 
 
 app.get('/',(req,res)=>{
-    res.send('Pizza Bazar Database working fine!')
+    res.send('Wedding Photography Database working fine!')
 })
 
 
