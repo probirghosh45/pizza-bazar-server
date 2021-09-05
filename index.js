@@ -127,6 +127,13 @@ app.post('/addReview', (req, res)=>{
 
 })
 
+// Review Get Request
+
+app.get('/reviews',(req,res)=>{
+  reviewCollection.find({})
+  .toArray((err,docs)=>res.send(docs))
+})
+
 
 // Order Post Request
 
