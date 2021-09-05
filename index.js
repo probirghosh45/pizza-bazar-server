@@ -39,6 +39,8 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 client.connect(err => {
   const productCollection = client.db(`${process.env.DATABASE_NAME}`).collection("products");
   const adminCollection = client.db(`${process.env.DATABASE_NAME}`).collection("admin");
+  const orderCollection = client.db(`${process.env.DATABASE_NAME}`).collection("orders");
+  const reviewCollection = client.db(`${process.env.DATABASE_NAME}`).collection("reviews");
 
 
 //    console.log('Database Connected')
@@ -89,10 +91,9 @@ app.patch('/update/:id',(req,res)=>{
 
         
 app.post('/addAdmin', (req, res)=>{
-  const email =req.body.email;
+  const email =req.body;
   console.log('new admin added',email)
-  console.log(req.body) 
-  adminCollection.insertOne({email})
+  adminCollection.insertOne(email)
   .then(result => {
     res.send(result.insertedCount > 0);
 })
@@ -103,7 +104,7 @@ app.post('/addAdmin', (req, res)=>{
 
 
 
-// isAdmin Post Request
+// isAdmin Get Request
 
 app.post('/isAdmin', (req, res)=>{
 const email = req.body.email;
@@ -114,7 +115,47 @@ adminCollection.find({ email: email})
 })
 
 
-});
+// Review Post Request
 
+app.post('/addReview', (req, res)=>{
+  const review =req.body;
+  console.log('new review added',review);
+  reviewCollection.insertOne(review)
+  .then(result => {
+    res.send(result.insertedCount > 0);
+})
+
+})
+
+
+// Order Post Request
+
+app.post('/addOrder', (req, res)=>{
+  const order =req.body;
+  console.log('new order added',order)
+  orderCollection.insertOne(order)
+  .then(result => {
+    res.send(result.insertedCount > 0);
+})
+
+})
+
+// Order Get Request
+
+app.get('/orders',(req,res)=>{
+  const queryEmail=req.query.email;  // according to client email order list will be different
+  orderCollection.find({email: queryEmail})
+  .toArray((err,docs)=>res.send(docs))
+})
+
+
+//  All Order Get Request
+app.get('/allOrders',(req,res)=>{
+  orderCollection.find({})
+  .toArray((err,docs)=>res.send(docs))
+})
+
+
+});
 
 app.listen(port);
